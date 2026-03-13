@@ -1,0 +1,57 @@
+
+.gpsDivElement{
+    position:absolute;
+    margin-top: 80px;
+    margin-left: 10px;
+    z-index: 1001;
+}
+
+.gpsButton{
+    background-color: #fff;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid #ccc;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: 20px;
+    cursor: pointer;
+}
+
+.gps_active{
+    background-image: url('./img/icon_gps_active.png');
+}
+
+.gps_deactive{
+    background-image: url('./img/icon_gps_deactive.png');
+}
+
+.position_marker {
+    width: 10px;
+    height: 10px;
+    background: rgb(0, 107, 194);
+    color: rgb(0, 107, 194);
+    box-shadow: 0 0 0 rgb(0, 107, 194);
+}
+
+.pulse {
+    display: block;
+    border-radius: 50%;
+    cursor: pointer;
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+      box-shadow: 0 0 0 0;
+    }
+    70% {
+      -moz-box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+       box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+    }
+    100% {
+      -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+       box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    }
+}

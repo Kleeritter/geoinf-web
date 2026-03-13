@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Wohlfühlkarte Braunschweig</title>
+        <!--Leaflet einbinden-->
+        <link rel="Stylesheet" href="./libs/leaflet/dist/leaflet.css" />
+        <!--Eigenen Style einbinden-->
+        <script>
+            const link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.href = "./css/style.css?v=" + Date.now();
+            document.head.appendChild(link);
+        </script>
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/assets/favicon/apple-touch-icon.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/assets/favicon/favicon-32x32.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/assets/favicon/favicon-16x16.png"
+        />
+        <link rel="manifest" href="/assets/favicon/site.webmanifest" />
+
+        <script src="./libs/leaflet/dist/leaflet-src.js"></script>
+        <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+        <link rel="stylesheet" href="./css/popup.css" />
+        <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap"
+            rel="stylesheet"
+        />
+        <script
+            src="https://kit.fontawesome.com/9e6df8285c.js"
+            crossorigin="anonymous"
+        ></script>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>
+                        <i
+                            class="fa-solid fa-spa"
+                            style="color: rgb(255, 255, 255)"
+                        ></i>
+                        Wohlfühlkarte Braunschweig
+                    </h1>
+                    <p>
+                        Wie beinflusst Lokalklima, Verschattung und Lärm das
+                        Wohlfühlen?
+                    </p>
+                </div>
+                <button
+                    class="header-help-btn"
+                    onclick="showWelcomeModal()"
+                    title="Hilfe & Erklärung"
+                >
+                    <i class="fa-regular fa-circle-question"></i>
+                    <span>Wie funktionierts?</span>
+                </button>
+            </header>
+
+            <div class="content">
+                <!-- Karte -->
+                <div class="map-container">
+                    <div id="map" class="map"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notizen Modal -->
+        <div id="notesModal" class="modal"></div>
+
+        <!--Die JavaScript Datei einbinden-->
+        <script src="./src/scoring.js"></script>
+
+        <!--Camera Button einbinden-->
+        <link rel="stylesheet" href="./libs/camera-button/camera-button.css" />
+        <script src="./libs/camera-button/camera-button.js"></script>
+        <script src="./src/imagereader.js"></script>
+        <script src="./src/noiseMeasurement.js"></script>
+        <script src="./src/popup.js"></script>
+        <script src="./src/map.js"></script>
+        <script src="./src/calc_idw.js"></script>
+        <script src="./src/welcome.js"></script>
+    </body>
+</html>

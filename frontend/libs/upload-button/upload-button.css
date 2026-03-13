@@ -1,0 +1,19 @@
+.uploadDivElement{
+    position: absolute;
+    z-index: 1001;
+    margin-top: 160px;
+    margin-left: 10px;
+}
+
+.uploadButton{
+    background-color: #fff;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid #ccc;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: 20px;
+    cursor: pointer;
+    background-image: url('./img/upload-icon.png');
+}

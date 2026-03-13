@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marker & Notizen Verwaltung</title>
+
+    <!-- Eigenen Style einbinden -->
+    <link rel="stylesheet" href="./css/style.css">
+
+    <!-- Leaflet einbinden -->
+    <link rel="stylesheet" href="./libs/leaflet/dist/leaflet.css">
+    <script src="./libs/leaflet/dist/leaflet-src.js"></script>
+
+    <!-- Camera Button Plugin -->
+    <script src="libs/camera-button/camera-button.js"></script>
+    <link rel="stylesheet" href="libs/camera-button/camera-button.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>📍 Marker & Notizen Verwaltung</h1>
+            <p>Erstelle und verwalte Marker auf der Karte</p>
+        </header>
+
+        <div class="content">
+            <!-- Karte -->
+            <div class="map-container">
+                <div id="map" class="map"></div>
+            </div>
+
+            <!-- Kontrollpanel (Sidebar) -->
+            <aside class="control-panel">
+                <div class="panel-section">
+                    <h2>🗺️ Anleitung</h2>
+                    <ul>
+                        <li><strong>Klick auf die Karte</strong> → Neuen Marker erstellen</li>
+                        <li><strong>Klick auf Marker</strong> → Im Panel wird dieser ausgewählt</li>
+                        <li><strong>Buttons nutzen</strong> → Bearbeiten, Notizen, Löschen</li>
+                    </ul>
+                </div>
+
+                <div class="panel-section" id="markerDetailsSection" style="display: none;">
+                    <h2>📌 Ausgewählter Marker</h2>
+                    <div id="markerDetails" class="marker-details">
+                        <p><strong>Name:</strong> <span id="detailName">-</span></p>
+                        <p><strong>Beschreibung:</strong> <span id="detailDescription">-</span></p>
+                        <p><strong>Koordinaten:</strong> <span id="detailCoordinates">-</span></p>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="editSelectedMarker()" title="Marker bearbeiten">
+                            ✏️ Bearbeiten
+                        </button>
+                        <button class="btn btn-info" onclick="showSelectedMarkerNotes()" title="Notizen verwalten">
+                            📝 Notizen
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteSelectedMarker()" title="Marker löschen">
+                            🗑️ Löschen
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h2>📊 Statistiken</h2>
+                    <p>Gesamt Marker: <strong id="markerCount">0</strong></p>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Element für den Camera Button -->
+    <div id="cameraDivElement" class="cameraDivElement"></div>
+
+    <!-- Element für das aufgenommene Foto -->
+    <div id="imageContainer" class="imageContainer"></div>
+
+    <!-- Notizen Modal -->
+    <div id="notesModal" class="modal"></div>
+
+    <!-- JavaScript-Datei einbinden -->
+    <script src="./src/map.js"></script>
+</body>
+</html>
