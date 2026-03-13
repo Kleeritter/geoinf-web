@@ -16,18 +16,11 @@ var voyager = L.tileLayer(
     maxZoom: 19,
   },
 );
-var positron = L.tileLayer(
-  "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-  {
-    attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
-    maxZoom: 19,
-  },
-);
 
 const map = L.map("map", {
   center: [52.27, 10.53],
   zoom: 12,
-  layers: [voyager],
+  layers: [osm],
 });
 
 let markers = {};
@@ -36,6 +29,7 @@ let laerm_well_layer;
 let aesthatic_layer;
 let secure_well_layer;
 let final_score_layer;
+let laerm_layer;
 let boundaryPolygon = null;
 
 const idwLegend = L.control({ position: "bottomleft" });
@@ -54,8 +48,8 @@ idwLegend.onAdd = function () {
   return div;
 };
 
-var baseMaps = { voyager: voyager, OpenStreetMap: osm, Hell: positron };
-var layerControl = L.control.layers(baseMaps, {}).addTo(map);
+//var baseMaps = { voyager: voyager, OpenStreetMap: osm, Hell: positron };
+var layerControl = L.control.layers({}, {}).addTo(map);
 
 async function initMap() {
   const response = await fetch("./assets/BRUNS.geojson");
@@ -123,10 +117,27 @@ async function initMap() {
     },
   }).addTo(map);
   loadMarkers();
+  map.addLayer(voyager);
 }
 
 initMap();
+const overlayLayers = new Set();
 
+map.on("overlayadd", (e) => {
+  overlayLayers.add(e.name);
+  if (overlayLayers.size > 0) {
+    map.removeLayer(osm);
+    if (!map.hasLayer(voyager)) map.addLayer(voyager);
+  }
+});
+
+map.on("overlayremove", (e) => {
+  overlayLayers.delete(e.name);
+  if (overlayLayers.size === 0) {
+    map.removeLayer(voyager);
+    if (!map.hasLayer(osm)) map.addLayer(osm);
+  }
+});
 /* // Button für "Marker am aktuellen Standort erstellen"
 L.Control.LocateAndAddMarker = L.Control.extend({
   options: {
@@ -282,33 +293,39 @@ async function loadMarkers() {
 
     final_score_layer = createIDWLayer(points);
     final_score_layer.addTo(map);
-    layerControl.addOverlay(final_score_layer, "Heatmap Final");
+    layerControl.addOverlay(final_score_layer, "Gesamtwohlfühlscore");
     idwLegend.addTo(map);
     klim_heatlayer = add_idw_layer(
       klim_heatlayer,
       "klim_well",
       geoJSON,
-      "Heatmap Klima",
+      "Wohlfühlscore Klima",
     );
 
     laerm_well_layer = add_idw_layer(
       laerm_well_layer,
       "laerm_well",
       geoJSON,
-      "Heatmap Lärm",
+      "Wohlfühlscore Lärm",
+    );
+    laerm_layer = add_idw_layer(
+      laerm_layer,
+      "laerm_score",
+      geoJSON,
+      "Gemessemer Lärm",
     );
 
     aesthatic_layer = add_idw_layer(
       aesthatic_layer,
       "aesthatic_well",
       geoJSON,
-      "Heatmap Aesthetic",
+      "Wohlfühlscore Ästhetik",
     );
     secure_well_layer = add_idw_layer(
       secure_well_layer,
       "secure_well",
       geoJSON,
-      "Heatmap Secure",
+      "Wohlfühlscore Sicherheit",
     );
   } catch (err) {
     console.error("Error loading markers:", err);
@@ -448,7 +465,8 @@ function addMarkerToMap(
 
       if (image) {
         const imgEl = document.getElementById(`img-${id}`);
-        if (imgEl) imgEl.src = `https://negative-sybille-tubsgeoinfp-ffb32b8c.koyeb.app${image}`;
+        if (imgEl)
+          imgEl.src = `https://negative-sybille-tubsgeoinfp-ffb32b8c.koyeb.app${image}`;
       } else {
         const imgEl = document.getElementById(`img-${id}`);
         imgEl.src = "./assets/placeholder.png";
@@ -868,3 +886,4 @@ function makeid(length) {
   }
   return result;
 }
+// Nach initMap(), ganz unten in der Datei hinzufügen

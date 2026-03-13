@@ -5,6 +5,7 @@ let deletediamge;
 let measurednoise;
 let imagus;
 let originalImageData;
+let imagescore;
 function createTempMarkerWithForm(
   lat,
   lng,
@@ -104,16 +105,7 @@ function createTempMarkerWithForm(
           </div>
           <div class="popup-slider-labels"><span>sehr schlecht</span><span>sehr gut</span></div>
         </div>
-        <div class="popup-field">
-          <label>Luftqualität</label>
-          <div class="popup-chips" id="pp-greenChips">
-            <div class="popup-chip" onclick="ppSelectChip(this,'pp-greenChips')">sehr schlecht</div>
-            <div class="popup-chip" onclick="ppSelectChip(this,'pp-greenChips')">schlecht</div>
-            <div class="popup-chip" onclick="ppSelectChip(this,'pp-greenChips')">ok</div>
-            <div class="popup-chip" onclick="ppSelectChip(this,'pp-greenChips')">gut</div>
-            <div class="popup-chip" onclick="ppSelectChip(this,'pp-greenChips')">sehr gut</div>
-          </div>
-        </div>
+
       </div>
 
       <!-- Seite 3: Lärm -->
@@ -169,17 +161,7 @@ function createTempMarkerWithForm(
             <span onclick="ppSetStars('greens',5)">★</span>
           </div>
         </div>
-        <div class="popup-field">
-          <label>Besonderheiten</label>
-          <div class="popup-chips">
-            <div class="popup-chip" onclick="ppToggleChip(this)">Schattig</div>
-            <div class="popup-chip" onclick="ppToggleChip(this)">Sitzgelegenheiten</div>
-            <div class="popup-chip" onclick="ppToggleChip(this)">Spielgeräte</div>
-            <div class="popup-chip" onclick="ppToggleChip(this)">Wasser</div>
-            <div class="popup-chip" onclick="ppToggleChip(this)">Barrierefrei</div>
-            <div class="popup-chip" onclick="ppToggleChip(this)">Beleuchtet</div>
-          </div>
-        </div>
+
       </div>
       <!-- Seite 4: Sicherheit und Nutzung -->
       <div class="popup-page" id="pp-5">
@@ -266,7 +248,12 @@ function createTempMarkerWithForm(
       <div class="popup-page" id="pp-7">
       <div class="imageholder" id="imageholder">
         <img id="pp-preview" style="display:none; width:100%; height:100%; object-fit:scale-down;">
-        <div id="imageContainer"></div>
+        <div id="imageContainer">
+          <div id="imagehint1" class="imagehint" style="display:flex">
+            <div class="imagehintico"> <i class="fa-solid fa-layer-group"></i> </div>
+            <div class="imagehinttext"> Noch kein Bild. Lade eins hoch        </div>
+          </div>
+        </div>
       </div>
 
 
@@ -414,7 +401,7 @@ const PP_TITLES = [
   { title: "Modellkalibrierung", sub: "Kleidung und Bewegung" },
   { title: "Bildeindruck", sub: "Bildliche Bewertung" },
   {
-    title: "Grünanteil",
+    title: "Grünanteilbestimmung",
     sub: "Pink markierte Bereiche = Als Natur-Grün erkannt.",
   },
 ];
@@ -423,6 +410,7 @@ function imager() {
   const input = document.getElementById("pp-cameraInput");
   const file = input?.files[0];
   if (!file) return;
+
   const reader = new FileReader();
   const cvs = document.getElementById("cvs");
   const ctx = cvs.getContext("2d", { willReadFrequently: true });
@@ -443,6 +431,7 @@ function imager() {
     const preview = document.getElementById("pp-preview");
     preview.src = event.target.result;
     preview.style.display = "block";
+
     // const previewer = document.getElementById("pp-previewer");
     // previewer.src = event.target.result;
     // previewer.style.display = "block";
@@ -451,6 +440,8 @@ function imager() {
   reader.readAsDataURL(file);
   document.getElementById("pp-deleteImgWrap").style.display = "flex";
   //document.getElementById("imageholder2").style.display = "flex";
+  const hint1 = document.getElementById("imagehint1");
+  hint1.style.display = "none";
 }
 
 function ppGoTo(n) {
@@ -499,6 +490,35 @@ async function initedit(id) {
   ppSelectCloth(markus.q9);
   ppSelectMove(markus.q10);
   console.log(markus);
+
+  if (markus.image) {
+    // Preview auf Seite 7
+    const preview = document.getElementById("pp-preview");
+    if (preview) {
+      preview.src = `https://negative-sybille-tubsgeoinfp-ffb32b8c.koyeb.app/${markus.image}`;
+      preview.style.display = "block";
+    }
+
+    // Hint verstecken
+    const hint1 = document.getElementById("imagehint1");
+    if (hint1) hint1.style.display = "none";
+
+    // Bild auch in Canvas laden (für Grünanteil-Analyse auf Seite 8)
+    const cvs = document.getElementById("cvs");
+    const ctx = cvs.getContext("2d", { willReadFrequently: true });
+    const img = new Image();
+    img.crossOrigin = "anonymous"; // ← das muss VOR img.src stehen!
+
+    img.onload = () => {
+      const scale = Math.min(1, 800 / Math.max(img.width, img.height));
+      cvs.width = img.width * scale;
+      cvs.height = img.height * scale;
+      ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
+      originalImageData = ctx.getImageData(0, 0, cvs.width, cvs.height);
+      analyzeWithTolerance();
+    };
+    img.src = `https://negative-sybille-tubsgeoinfp-ffb32b8c.koyeb.app${markus.image}`;
+  }
 }
 
 function unlock(sec = "") {
@@ -524,6 +544,22 @@ function unlock(sec = "") {
 }
 
 function ppNext(lat, lng, editing = false, id = null, sec = "") {
+  if (popupState.page === 7) {
+    const preview = document.getElementById("pp-preview");
+    const hasImage =
+      preview && preview.style.display !== "none" && preview.src !== "";
+    if (!hasImage) {
+      const hint1 = document.getElementById("imageholder");
+      if (hint1) {
+        hint1.classList.remove("hint-error"); // Reset falls schon drauf
+        void hint1.offsetWidth; // Reflow erzwingen → Animation neu starten
+        hint1.classList.add("hint-error");
+        setTimeout(() => hint1.classList.remove("hint-error"), 600);
+      }
+      return;
+    }
+  }
+
   if (popupState.page === POPUP_TOTAL) {
     ppSave(lat, lng, editing, id, sec);
   } else {
@@ -622,9 +658,7 @@ async function ppSave(lat, lng, editing = false, id = null, sec = "") {
   const secure_well = calculations[4]; //TODO Berechnen
   const user_score = calculations[0]; //TODO Berechnen
   const laerm_score = measurednoise;
-  const image_score = parseInt(
-    document.getElementById("pp-overall")?.value || 5,
-  ); //TODO Berechnen
+  const image_score = imagescore; //TODO Berechnen
   const final_score = calculateFinalScore(user_score, laerm_score, image_score); //TODO Berechnen
   const image = await getImage(deletediamge);
   console.log(
@@ -802,6 +836,15 @@ function deleteExistingImage() {
   const container = document.getElementById("imageContainer");
   if (container) container.innerHTML = "";
 
+  const hint1 = document.createElement("div");
+  hint1.classList = "imagehint";
+  hint1.style.display = "flex";
+  hint1.id = "imagehint1";
+  hint1.innerHTML = `
+    <div class="imagehintico"> <i class="fa-solid fa-layer-group"></i> </div>
+    <div class="imagehinttext"> Noch kein Bild. Lade eins hoch        </div>
+  `;
+  container.appendChild(hint1);
   // Lösch-Button wieder verstecken
   const wrap = document.getElementById("pp-deleteImgWrap");
   if (wrap) wrap.style.display = "none";
@@ -906,4 +949,5 @@ function analyzeWithTolerance() {
 
   const result = (greenCount / totalOpaque) * 100;
   percDisp.textContent = result.toFixed(2) + "%";
+  imagescore = (greenCount / totalOpaque) * 10;
 }

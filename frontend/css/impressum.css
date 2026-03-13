@@ -1,0 +1,141 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "DM Sans", sans-serif;
+    background: #f5f7f5;
+    color: #1a2e1c;
+    min-height: 100vh;
+}
+
+header {
+    background: #3d6b44;
+    color: white;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+header a {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s;
+}
+
+header a:hover {
+    color: white;
+}
+
+header h1 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+main {
+    max-width: 720px;
+    margin: 48px auto;
+    padding: 0 24px 64px;
+}
+
+h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #3d6b44;
+    margin-bottom: 6px;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: #6b8f6e;
+    margin-bottom: 40px;
+}
+
+section {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid rgba(61, 107, 68, 0.15);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+}
+
+section h3 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #3d6b44;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(61, 107, 68, 0.12);
+}
+
+p,
+li {
+    font-size: 14px;
+    line-height: 1.75;
+    color: #2c3e2d;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(61, 107, 68, 0.07);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+ul li:last-child {
+    border-bottom: none;
+}
+
+.lib-name {
+    font-weight: 500;
+    color: #1a2e1c;
+    min-width: 160px;
+}
+
+.lib-license {
+    font-size: 12px;
+    background: #e8f5e9;
+    color: #2d5233;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+a {
+    color: #3d6b44;
+}
+a:hover {
+    color: #2d5233;
+}
+
+.note {
+    font-size: 12px;
+    color: #7a9e7e;
+    margin-top: 12px;
+    line-height: 1.6;
+}
+
+.note + .note {
+    margin-top: 8px;
+}
