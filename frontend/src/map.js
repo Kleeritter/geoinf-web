@@ -448,7 +448,7 @@ function addMarkerToMap(
 
       if (image) {
         const imgEl = document.getElementById(`img-${id}`);
-        if (imgEl) imgEl.src = `http://localhost:5001${image}`;
+        if (imgEl) imgEl.src = `https://negative-sybille-tubsgeoinfp-ffb32b8c.koyeb.app${image}`;
       } else {
         const imgEl = document.getElementById(`img-${id}`);
         imgEl.src = "./assets/placeholder.png";
