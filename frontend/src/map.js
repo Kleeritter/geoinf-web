@@ -58,7 +58,7 @@ var baseMaps = { voyager: voyager, OpenStreetMap: osm, Hell: positron };
 var layerControl = L.control.layers(baseMaps, {}).addTo(map);
 
 async function initMap() {
-  const response = await fetch("/src/BRUNS.geojson");
+  const response = await fetch("./assets/BRUNS.geojson");
   const braunschweigGeoJSON = await response.json();
 
   boundaryPolygon = braunschweigGeoJSON;
