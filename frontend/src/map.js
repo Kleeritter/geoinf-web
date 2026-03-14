@@ -18,7 +18,7 @@ let laerm_layer;
 let boundaryPolygon = null;
 
 // Initialisierung der API
-const API_URL = "negative-sybille-tubsgeoinfp-ffb32b8c.koyeb.app";
+const API_URL = "https://negative-sybille-tubsgeoinfp-ffb32b8c.koyeb.app";
 
 // Initialisierung der Karte
 var osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
