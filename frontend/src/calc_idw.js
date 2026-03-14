@@ -1,9 +1,18 @@
+// ============================================================
+// calc_idw.Js
+// Funktionen für die Berechnung der Inverse Distance
+//  Interpolation.
+// ============================================================
+
 function createIDWLayer(points, resolution = 200, power = 3) {
   let minLat = Infinity,
     maxLat = -Infinity,
     minLng = Infinity,
     maxLng = -Infinity;
   const allRings = [];
+  // Inversion erfolgt nur im Braunschweig Auschnitt
+  // Wird Immer für den gesammten Auschnitt bestimmt
+  // und ist nicht vom Leaflet Auschnitt abhängig
   boundaryPolygon.features
     ? boundaryPolygon.features.forEach((f) => {
         const geom = f.geometry;
@@ -29,6 +38,8 @@ function createIDWLayer(points, resolution = 200, power = 3) {
 
   const bounds = L.latLngBounds([minLat, minLng], [maxLat, maxLng]);
 
+  // IDW wir in Canvase gezeichnet
+  // Dafür Erstellung von Canvas
   const canvas = document.createElement("canvas");
   canvas.width = resolution;
   canvas.height = resolution;
@@ -38,15 +49,14 @@ function createIDWLayer(points, resolution = 200, power = 3) {
   const minVal = Math.min(...values);
   const maxVal = Math.max(...values);
 
-  // FIX 2: Korrekte Farbskala ohne Inversion
-  // t=0 → rot (unwohl), t=0.5 → gelb (neutral), t=1 → grün (wohl)
+  // Funktion um Werte in RGB zuzerlegt
   function valueToRGBA(t) {
     const r = Math.round(255 * Math.min(1, 2 * (1 - t)));
     const g = Math.round(255 * Math.min(1, 2 * t));
     const b = 0;
     return [r, g, b];
   }
-
+  // Berechnung der Inversion
   const imageData = ctx.createImageData(resolution, resolution);
   for (let y = 0; y < resolution; y++) {
     for (let x = 0; x < resolution; x++) {
@@ -73,7 +83,7 @@ function createIDWLayer(points, resolution = 200, power = 3) {
 
       const raw = valueSum / weightSum;
       const t = (raw - minVal) / (maxVal - minVal || 1);
-      const [r, g, b] = valueToRGBA(t);
+      const [r, g, b] = valueToRGBA(t); // Berechnete Werte werden in Farben umgewandelt
       const i = (y * resolution + x) * 4;
       imageData.data[i] = r;
       imageData.data[i + 1] = g;
@@ -81,13 +91,13 @@ function createIDWLayer(points, resolution = 200, power = 3) {
       imageData.data[i + 3] = 160;
     }
   }
+  // Speichern der inerpolation im Canvas
   ctx.putImageData(imageData, 0, 0);
 
-  // Stadtgrenze als Clip-Maske
+  // Stadtgrenze als Clip-Maske wie oben beschrieben
   if (boundaryPolygon) {
     ctx.globalCompositeOperation = "destination-in";
     ctx.beginPath();
-
     allRings.forEach((ring) => {
       ring.forEach(([lng, lat], i) => {
         const x =

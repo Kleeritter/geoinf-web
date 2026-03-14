@@ -3,7 +3,9 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Über das Projekt – Wohlfühlkarte Braunschweig</title>
+        <title>Über das Projekt</title>
+        <!--Stylesheets einbinden-->
+        <link rel="stylesheet" href="./css/explainer.css" />
         <link
             href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap"
             rel="stylesheet"
@@ -12,32 +14,46 @@
             src="https://kit.fontawesome.com/9e6df8285c.js"
             crossorigin="anonymous"
         ></script>
-        <link rel="stylesheet" href="./css/explainer.css" />
+        <!--KATEX für Latex Formel Rendering einbinden-->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+        />
+        <script
+            defer
+            src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+        ></script>
+        <script
+            defer
+            src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+            onload="renderMathInElement(document.body)"
+        ></script>
+        <!--Favicons einbinden-->
         <link
             rel="apple-touch-icon"
             sizes="180x180"
-            href="/assets/favicon/apple-touch-icon.png"
+            href="./assets/favicon/apple-touch-icon.png"
         />
         <link
             rel="icon"
             type="image/png"
             sizes="32x32"
-            href="/assets/favicon/favicon-32x32.png"
+            href="./assets/favicon/favicon-32x32.png"
         />
         <link
             rel="icon"
             type="image/png"
             sizes="16x16"
-            href="/assets/favicon/favicon-16x16.png"
+            href="./assets/favicon/favicon-16x16.png"
         />
-        <link rel="manifest" href="/assets/favicon/site.webmanifest" />
+        <link rel="manifest" href="./assets/favicon/site.webmanifest" />
     </head>
     <body>
         <header class="header">
             <div class="header-left">
                 <div class="header-icon"><i class="fa-solid fa-spa"></i></div>
                 <div class="header-text">
-                    <h1>Wohlfühlkarte <span>Braunschweig</span></h1>
+                    <h1>Wohlfühlkarte Braunschweig</h1>
                     <p>
                         Wie beeinflussen Lokalklima, Verschattung und Lärm das
                         Wohlbefinden?
@@ -50,50 +66,59 @@
                 >
             </nav>
         </header>
-
+        <!-- Handelsempfehlung einbinden-->
         <section class="hero">
             <div class="hero-tag">
                 <i class="fa-solid fa-graduation-cap"></i> Forschungsprojekt
             </div>
             <h2>Wie fühlt sich deine Stadt an?</h2>
             <p>
-                Hitze, Lärm, fehlende Bäume – der urbane Alltag beeinflusst
-                unser Wohlbefinden mehr als wir denken. Die Wohlfühlkarte macht
-                dieses Erleben sichtbar.
+                Hitze, Lärm, fehlende Bäume, der urbane Alltag beeinflusst unser
+                Wohlbefinden mehr als wir denken. Diese Wohlfühlkarte kann Teile
+                dieses Erleben sichtbar machen und z.B. dabei helfen Vorhersagen
+                biometeorologischer Stadtklima Modelle zu optimieren.
             </p>
             <a href="./index.html" class="hero-btn"
-                ><i class="fa-solid fa-arrow-right"></i> Jetzt mitmachen</a
+                ><i class="fa-solid fa-arrow-right"></i> Jetzt teilnehmen</a
             >
         </section>
-
-        <main class="main">
+        <!--Erklärungen-->
+        <div class="main">
+            <!-- Motivation -->
             <section>
                 <div class="section-label">Motivation</div>
                 <h2 class="section-title">Warum eine Wohlfühlkarte?</h2>
                 <p class="section-body">
-                    Städte sind mehr als Gebäude und Straßen – sie sind
-                    Lebensräume, in denen Millionen von Menschen täglich
-                    Entscheidungen darüber treffen, wo sie sich aufhalten,
-                    bewegen und erholen. Nicht alle Stadtteile fühlen sich
-                    gleich an: Während einige Orte durch Grünflächen, Schatten
-                    und Ruhe einladen, sind andere geprägt von Hitze,
-                    Verkehrslärm und Beton.
+                    Städte in all ihren Facetten sind ein enorm komplexes
+                    System, in dem viele Faktoren Einfluss auf das resultierende
+                    Wohlempfinden der Menschen nehmen. Grünanlagen
+                    beispielsweise führen zu kühlerer und frischerer Luft,
+                    können aber auch größerskalige Belüftungen der Städte
+                    behindern. In bioklimatischen Stadtklimatologie Modellen
+                    wird häufig ein Wohlempfinden der Menschen unter bestimmten
+                    Bedingungen postuliert, nehmen dabei aber wenig Rücksicht
+                    auf die individuelle Wahrnehmung. Um der Komplexität dieses
+                    Empfindens Rechnung zu tragen wurde diese Kartenanwendung
+                    entwickelt.
                 </p>
                 <p class="section-body">
-                    Die Wohlfühlkarte Braunschweig ist ein partizipatives
-                    Instrument: Bürgerinnen und Bürger bewerten Orte anhand
-                    verschiedener Umweltfaktoren und tragen so zu einem
-                    kollektiven Bild des städtischen Wohlbefindens bei. Diese
-                    Daten können Planungsprozesse informieren und helfen,
-                    Problemstellen sichtbar zu machen.
+                    Die Wohlfühlkarte Braunschweig ist dabei ein partizipatives
+                    Instrument. Bürgerinnen und Bürger bewerten Orte anhand
+                    verschiedener Umweltfaktoren selbst und tragen so zu einem
+                    kollektiven aber auch heteorogeneren Bild des städtischen
+                    Wohlbefindens bei. Diese Daten können anschließend
+                    Planungsprozesse informieren, helfen Problemstellen sichtbar
+                    zu machen und Modelle zu optimieren.
                 </p>
             </section>
 
             <hr class="divider" />
-
+            <!--Einflussfaktoren einbinden-->
             <section>
                 <div class="section-label">Einflussfaktoren</div>
-                <h2 class="section-title">Was beeinflusst das Wohlbefinden?</h2>
+                <h2 class="section-title">
+                    Wie untersuchen wir Wohlempfinden?
+                </h2>
                 <p class="section-body">
                     Unser Wohlbefinden im Freien wird durch ein Zusammenspiel
                     verschiedener Umweltfaktoren bestimmt:
@@ -107,8 +132,8 @@
                         <h3>Lokalklima & Hitze</h3>
                         <p>
                             Versiegelte Flächen und fehlende Bäume führen zu
-                            urbanen Wärmeinseln. Hitze ist einer der stärksten
-                            Faktoren für Unwohlsein im Freiraum.
+                            urbanen Wärmeinseln. Feuchte und Hitze sind einer
+                            der stärksten Faktoren für Unwohlsein im Freiraum.
                         </p>
                     </div>
                     <div class="card">
@@ -139,9 +164,9 @@
                         </div>
                         <h3>Sicherheitsgefühl</h3>
                         <p>
-                            Das subjektive Sicherheitsempfinden – geprägt durch
+                            Das subjektive Sicherheitsempfinden, geprägt durch
                             Beleuchtung, Belebung und räumliche
-                            Übersichtlichkeit – bestimmt, ob ein Ort aufgesucht
+                            Übersichtlichkeit bestimmt, ob ein Ort aufgesucht
                             wird.
                         </p>
                     </div>
@@ -164,21 +189,22 @@
                         <p>
                             Sitzgelegenheiten, Spielgeräte, Barrierefreiheit und
                             Pflege des Ortes bestimmen, ob Menschen gerne
-                            verweilen oder nur durcheilen.
+                            verweilen oder nur durcheilen; es sich also um
+                            Non-Lieux (Nicht-Orte) handelt.
                         </p>
                     </div>
                 </div>
             </section>
 
             <hr class="divider" />
-
+            <!--Methodik-->
             <section>
                 <div class="section-label">Methodik</div>
                 <h2 class="section-title">Wie funktioniert die Karte?</h2>
                 <p class="section-body">
                     Das Projekt kombiniert partizipative Datenerhebung mit
                     räumlicher Interpolation zu einer flächenhaften Karte des
-                    Wohlbefindens.
+                    Wohlbefindens in verschiedenen Dimensionen.
                 </p>
 
                 <div class="steps">
@@ -205,9 +231,10 @@
                             <h3>Bewertungen speichern</h3>
                             <p>
                                 Jede Bewertung wird als georeferenzierter
-                                Datenpunkt in einer PostGIS-Datenbank abgelegt.
-                                Der erfasste Wohlfühlwert (1–10) bildet die
-                                Grundlage für die spätere Visualisierung.
+                                Datenpunkt in einer Datenbank abgelegt. Die
+                                verschiendenen erfassten Wohlfühlwert (1–10)
+                                bilden die Grundlage für die spätere
+                                Visualisierung.
                             </p>
                         </div>
                     </div>
@@ -219,9 +246,9 @@
                             <h3>Räumliche Interpolation (IDW)</h3>
                             <p>
                                 Aus den einzelnen Messpunkten wird mithilfe der
-                                <em>Inversen Distanzgewichtung</em> eine
-                                flächenhafte Karte berechnet. Bereiche zwischen
-                                Messpunkten erhalten einen interpolierten Wert.
+                                Inversen Distanzgewichtung eine flächenhafte
+                                Karte berechnet. Bereiche zwischen Messpunkten
+                                erhalten einen interpolierten Wert.
                             </p>
                         </div>
                     </div>
@@ -232,10 +259,11 @@
                         <div class="step-content">
                             <h3>Visualisierung als Heatmap</h3>
                             <p>
-                                Das Ergebnis wird als farbkodierter Layer über
-                                die Stadtkarte gelegt: Rot steht für niedrige
-                                Wohlfühlwerte, Grün für hohe. Die Karte
-                                aktualisiert sich mit jedem neuen Eintrag.
+                                Die Ergebnisse werden als farbkodierte Layer
+                                über die Stadtkarte gelegt: Rot steht für
+                                niedrige Wohlfühlwerte, Grün für hohe. Die Karte
+                                aktualisiert sich mit jedem neuen Eintrag
+                                automatisch.
                             </p>
                         </div>
                     </div>
@@ -249,13 +277,14 @@
                     <p>
                         Bei der IDW wird für jeden Punkt im Raum ein
                         interpolierter Wert berechnet, indem die bekannten
-                        Messpunkte gewichtet gemittelt werden – wobei nähere
-                        Punkte einen stärkeren Einfluss haben als weiter
-                        entfernte.
+                        Messpunkte gewichtet gemittelt werden. Dabei erhalten
+                        nähere Punkte ein höheres Gewicht ( stärkeren Einfluss)
+                        als weiter entfernte.
                     </p>
                     <div class="formula">
-                        Z(x) = Σ (wᵢ · zᵢ) / Σ wᵢ &nbsp;|&nbsp; wᵢ = 1 / d(x,
-                        xᵢ)²
+                        \[ Z(x) = \frac{\displaystyle\sum_{i} w_i \cdot
+                        z_i}{\displaystyle\sum_{i} w_i} \qquad \text{mit} \qquad
+                        w_i = \frac{1}{d(x,\, x_i)^2} \]
                     </div>
                     <p>
                         Der Exponent (hier: 2) bestimmt, wie stark der Einfluss
@@ -264,23 +293,51 @@
                         Verläufen.
                     </p>
                 </div>
+                <div class="info-box">
+                    <h3>
+                        <i class="fa-solid fa-tree"></i> Grünanteilbestimmung
+                        (Excess Green Index)
+                    </h3>
+                    <p>
+                        Für jeden Pixel des Fotos wird der Excess Green Index
+                        berechnet. Dieser misst, wie stark der Grünkanal die
+                        anderen Farbkanäle überwiegt. Pixel, deren ExG-Wert den
+                        einstellbaren Toleranzwert überschreitet, werden als
+                        Vegetation erkannt.
+                    </p>
+
+                    \[ \text{ExG} = 2 \cdot g - r - b \]
+
+                    <p>
+                        Zusätzlich werden dunkle Grüntöne (Schatten unter
+                        Bäumen) erfasst, wenn sie einen reduzierten
+                        Schwellenwert überschreiten und die Bedingung \( g > r
+                        \) und \( g > b \) erfüllen. Der Grünanteil in Prozent
+                        ergibt sich dann als:
+                    </p>
+
+                    \[ G = \frac{\text{Anzahl grüner Pixel}}{\text{Anzahl opaker
+                    Pixel}} \times 100 \]
+
+                    <p>
+                        Der Toleranzregler verschiebt den Schwellenwert: Ein
+                        niedrigerer Wert erkennt mehr Grün (gröber), ein höherer
+                        Wert ist selektiver (feiner).
+                    </p>
+                </div>
             </section>
 
             <div class="cta">
                 <h2>Werde Teil des Projekts</h2>
                 <p>
-                    Deine Einschätzung zählt – jeder Datenpunkt verbessert das
-                    Bild unserer Stadt. Es dauert nur zwei Minuten.
+                    Deine Einschätzung zählt! Jeder Datenpunkt verbessert die
+                    Kartierung des Wohlbefindens unserer Stadt. Es dauert nur
+                    wenige Minuten.
                 </p>
                 <a href="./index.html" class="cta-btn"
                     ><i class="fa-solid fa-map"></i> Zur Karte und mitmachen</a
                 >
             </div>
-        </main>
-
-        <footer class="footer">
-            Wohlfühlkarte Braunschweig &nbsp;·&nbsp; Forschungsprojekt
-            &nbsp;·&nbsp; Daten werden anonym gespeichert
-        </footer>
+        </div>
     </body>
 </html>

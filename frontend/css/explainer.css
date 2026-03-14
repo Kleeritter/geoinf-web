@@ -1,3 +1,7 @@
+@font-face {
+    font-family: "Limelight";
+    src: url("../font/Limelight-Regular.ttf") format("truetype");
+}
 *,
 *::before,
 *::after {
@@ -138,7 +142,7 @@ body {
 }
 
 .hero h2 {
-    font-family: "DM Serif Display", serif;
+    font-family: "Limelight", serif;
     font-size: clamp(28px, 5vw, 48px);
     font-weight: 400;
     line-height: 1.15;
@@ -195,7 +199,7 @@ body {
 }
 
 .section-title {
-    font-family: "DM Serif Display", serif;
+    font-family: "Limelight", serif;
     font-size: 28px;
     font-weight: 400;
     color: var(--text);

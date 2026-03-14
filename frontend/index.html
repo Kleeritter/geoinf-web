@@ -4,16 +4,13 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Wohlfühlkarte Braunschweig</title>
-        <!--Leaflet einbinden-->
+        <!--Stylesheets einbinden-->
+        <!--Leaflet Stylesheet-->
         <link rel="Stylesheet" href="./libs/leaflet/dist/leaflet.css" />
-        <!--Eigenen Style einbinden-->
-        <script>
-            const link = document.createElement("link");
-            link.rel = "stylesheet";
-            link.href = "./css/style.css?v=" + Date.now();
-            document.head.appendChild(link);
-        </script>
-
+        <!--Eigene Stylesheets-->
+        <link rel="Stylesheet" href="./css/style.css" />
+        <link rel="stylesheet" href="./css/popup.css" />
+        <!--Favicons einbinden-->
         <link
             rel="apple-touch-icon"
             sizes="180x180"
@@ -32,16 +29,15 @@
             href="./assets/favicon/favicon-16x16.png"
         />
         <link rel="manifest" href="./assets/favicon/site.webmanifest" />
-
-        <script src="./libs/leaflet/dist/leaflet-src.js"></script>
-        <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
-        <link rel="stylesheet" href="./css/popup.css" />
-        <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
-
         <link
             href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap"
             rel="stylesheet"
         />
+        <!--Remote Scripte einbinden-->
+        <script src="./libs/leaflet/dist/leaflet-src.js"></script>
+        <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+        <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+        <!--Font Awesome einbinden-->
         <script
             src="https://kit.fontawesome.com/9e6df8285c.js"
             crossorigin="anonymous"
@@ -72,7 +68,7 @@
                             margin-top: 2px;
                         "
                     >
-                        Impressum &amp; Lizenzen
+                        Impressum & Lizenzen
                     </a>
                 </div>
                 <button
@@ -93,20 +89,16 @@
             </div>
         </div>
 
-        <!-- Notizen Modal -->
-        <div id="notesModal" class="modal"></div>
-
-        <!--Die JavaScript Datei einbinden-->
+        <!-- Locale Scripte einbinden-->
         <script src="./src/scoring.js"></script>
-
-        <!--Camera Button einbinden-->
-        <link rel="stylesheet" href="./libs/camera-button/camera-button.css" />
-        <script src="./libs/camera-button/camera-button.js"></script>
         <script src="./src/imagereader.js"></script>
         <script src="./src/noiseMeasurement.js"></script>
         <script src="./src/popup.js"></script>
-        <script src="./src/map.js"></script>
+        <script src="./src/funksForApiInteraction.js"></script>
+        <script src="./src/funksForMap.js"></script>
         <script src="./src/calc_idw.js"></script>
+        <script src="./src/map.js"></script>
+
         <script src="./src/welcome.js"></script>
     </body>
 </html>

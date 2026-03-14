@@ -1,4 +1,12 @@
+// ============================================================
+// imagereader.js
+// Funktionen für die Berechnung der Grünanteils aus Bildern
+//
+// ============================================================
+
 function imagegreener() {
+  // Input ist im vorherigen Schritt im Hinzufügen-Popup
+  // hochgeladenes Bild
   const input = document.getElementById("imageInput");
   const cvs = document.getElementById("cvs");
   const ctx = cvs.getContext("2d", { willReadFrequently: true });
@@ -9,13 +17,13 @@ function imagegreener() {
 
   let originalImageData = null;
   let currentImageData = null;
-
+  // eigentliche Analyse
   function analyzeWithTolerance() {
     if (!originalImageData) return;
-
+    // Toleranz für die Berechnung stammt aus Toleranz slider
     const tolerance = parseInt(toleranceSlider.value);
     toleranceSpan.textContent = tolerance;
-
+    // Aus Image imagedata beziehen
     const imgData = new ImageData(
       new Uint8ClampedArray(originalImageData.data),
       originalImageData.width,
@@ -23,15 +31,16 @@ function imagegreener() {
     );
     const data = imgData.data;
 
+    //initialiseren der Pixel
     let greenCount = 0;
     let totalOpaque = 0;
-
+    // Auslesen von RGBA
     for (let i = 0; i < data.length; i += 4) {
       const r = originalImageData.data[i];
       const g = originalImageData.data[i + 1];
       const b = originalImageData.data[i + 2];
       const a = originalImageData.data[i + 3];
-
+      //Korrekturen bei geringer Transparenz
       if (a < 128) {
         data[i] = r;
         data[i + 1] = g;
@@ -68,17 +77,7 @@ function imagegreener() {
     const result = (greenCount / totalOpaque) * 100;
     percDisp.textContent = result.toFixed(2) + "%";
   }
-
-  input.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    loading.style.display = "block";
-    const reader = new FileReader();
-
-    reader.readAsDataURL(file);
-  });
-
+  // wenn sich Toleranzänder nochmal anaylsierne in Echtzeit
   toleranceSlider.addEventListener("input", () => {
     if (originalImageData) analyzeWithTolerance();
   });

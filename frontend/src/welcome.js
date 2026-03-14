@@ -1,12 +1,11 @@
 // ============================================================
 // WELCOME MODAL
-// Zeigt sich beim ersten Besuch (danach per localStorage gemerkt)
+// Zeigt sich beim Besuch der Seite
+// Da wir ja an die allgemeine Bevölkerung gehen ist das auch
+// gleichzeitig die Anleitung.
 // ============================================================
 
 function showWelcomeModal() {
-  // Einmal pro Browser-Session zeigen – auskommentieren zum Testen
-  // if (localStorage.getItem('welcomeSeen')) return;
-
   const overlay = document.createElement("div");
   overlay.id = "welcome-overlay";
   overlay.innerHTML = `
@@ -15,7 +14,7 @@ function showWelcomeModal() {
       <div class="welcome-hero">
         <span class="welcome-icon"><i class="fa-solid fa-spa" style="color: rgb(255, 255, 255);"></i></span>
         <h1 id="welcomeTitle">Wohlfühlkarte Braunschweig</h1>
-        <p>Hilf uns, deine Stadt besser zu verstehen – teile dein Wohlbefinden an verschiedenen Orten.</p>
+        <p>Hilf uns, deine Stadt besser zu verstehen! Teile dein Wohlbefinden an verschiedenen Orten.</p>
       </div>
 
       <div class="welcome-body">
@@ -73,7 +72,6 @@ function closeWelcomeModal() {
   overlay.addEventListener("animationend", () => overlay.remove(), {
     once: true,
   });
-  localStorage.setItem("welcomeSeen", "1");
   document.removeEventListener("keydown", _welcomeEscHandler);
 }
 

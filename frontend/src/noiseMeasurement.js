@@ -1,4 +1,8 @@
-//import { calculateRMS, analyzeNoiseMeasurement } from "./noiseAnalysis.js";
+// ============================================================
+// noiseMeasurements.js
+// Funktionen für die Berechnung der Grünanteils aus Bildern
+//
+// ============================================================
 
 async function measureNoise(durationMs = 10000, sampleInterval = 100) {
   let stream;

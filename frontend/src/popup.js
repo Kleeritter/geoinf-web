@@ -1,11 +1,37 @@
-// Zustand für den Fragebogen
-let popupState = { page: 1, stars: { safety: 0, stay: 0, attr: 0, greens: 0 } };
-const POPUP_TOTAL = 8;
-let deletediamge;
+// ============================================================
+// Popup.js
+// Funktionen für die Darstellung des Popups bei Erstellung
+// Bearbeitung von Markern.
+//
+// ============================================================
+
+// Zustand für den Fragebogen Initialisieren
+let popupState = { page: 1, stars: { safety: 0, stay: 0, attr: 0, greens: 0 } }; // Zustand der Sterne
+const POPUP_TOTAL = 8; // Seiten des Popups die Numeriert werden
+let deletediamge; // Wurde Bild gelöscht
 let measurednoise;
 let imagus;
 let originalImageData;
 let imagescore;
+
+// Titel der Seiten
+const PP_TITLES = [
+  { title: "Ort benennen", sub: "Grundlegende Informationen" },
+  {
+    title: "Umwelt & Klimatologie",
+    sub: "Temperatur, Verschattung, Luftqualität",
+  },
+  { title: "Lärm", sub: "Lautstärke" },
+  { title: "Ästhetik", sub: "Attraktivität und Grünflächen" },
+  { title: "Sicherheit", sub: "Sicherheit" },
+  { title: "Modellkalibrierung", sub: "Kleidung und Bewegung" },
+  { title: "Bildeindruck", sub: "Bildliche Bewertung" },
+  {
+    title: "Grünanteilbestimmung",
+    sub: "Pink markierte Bereiche = Als Natur-Grün erkannt.",
+  },
+];
+
 function createTempMarkerWithForm(
   lat,
   lng,
@@ -16,20 +42,16 @@ function createTempMarkerWithForm(
 ) {
   if (tempMarker) map.removeLayer(tempMarker);
   deletediamge = false;
-
+  // Temporären Marker während des Bearbeitens hinzufügen
   tempMarker = L.marker([lat, lng], {
     icon: L.icon({
       iconUrl: "./assets/location-dot-solid.png",
-      //shadowUrl: "leaf-shadow.png",
 
-      iconSize: [38, 38], // size of the icon
-      //shadowSize: [50, 64], // size of the shadow
-      //iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-      //shadowAnchor: [4, 62], // the same for the shadow
-      //popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
+      iconSize: [38, 38],
     }),
   }).addTo(map);
 
+  //popupstate resetten
   popupState = { page: 1, stars: { safety: 0, stay: 0 } };
 
   const popupContent = `
@@ -51,8 +73,6 @@ function createTempMarkerWithForm(
         <div class="popup-field">
           <label>Bearbeitungspasswort</label>
           <input type="text" id="pp-seck">
-
-
         </div>
       </div>
 
@@ -66,17 +86,16 @@ function createTempMarkerWithForm(
           <label>Kurze Beschreibung</label>
           <textarea id="pp-desc" placeholder="Was befindet sich hier?"></textarea>
         </div>
-
         <div class="popup-field">
           <label>Koordinaten</label>
           <button class="popup-btn-placeholder" onclick="getCurrentLocationForPopup(this)">
-            <i class="fa-solid fa-location-crosshair"></i>📍 Aktuellen Standort verwenden
+            <i class="fa-solid fa-location-crosshair"></i><i class="fa-solid fa-location-crosshairs"></i> Aktuellen Standort verwenden
           </button>
           <div id="popup-coordinates-display" style="font-size: 11px; color: #777; margin-top: 5px; display: none;">
             Ermittelte Koordinaten: <span id="popup-coords-lat"></span>, <span id="popup-coords-lng"></span>
           </div>
         </div>
-
+        <!--Löschen Button (nur angezeigt wenn im Bearbeiten Modus) -->
         <div class="popup-field" style="${!editing ? "display:none" : "display:block"}">
           <button class="popup-btn-next popup-dng" onclick="deleteMarkerFromDB(${id})">
           <i class="fa-solid fa-trash-can"></i> Marker aus Datenbank löschen
@@ -94,7 +113,6 @@ function createTempMarkerWithForm(
             <span class="popup-slider-val" id="pp-q1Val">5</span>
           </div>
           <div class="popup-slider-labels"><span>sehr unangenehm</span><span>sehr angenehm</span></div>
-
         </div>
         <div class="popup-field">
           <label>Wie gut ist das Verhältnis zwischen Sonne und Schatten an diesem Ort? </label>
@@ -105,7 +123,6 @@ function createTempMarkerWithForm(
           </div>
           <div class="popup-slider-labels"><span>sehr schlecht</span><span>sehr gut</span></div>
         </div>
-
       </div>
 
       <!-- Seite 3: Lärm -->
@@ -119,11 +136,9 @@ function createTempMarkerWithForm(
           </div>
           <div class="popup-slider-labels"><span>sehr störend</span><span>kaum störend</span></div>
            <button class="popup-btn-placeholder" style="margin-top:7px" onclick="ppMeasureNoise(this)">
-             🎙️ Lärm jetzt messen
+             <i class="fa-solid fa-microphone-lines"></i> Lärm jetzt messen
            </button>
            <div id="pp-noiseStatus" style="margin-top:6px; font-size:0.9em;"></div>
-
-
         </div>
         <div class="popup-field">
           <label>Wie ruhig empfinden Sie diesen Ort insgesamt? </label>
@@ -134,7 +149,6 @@ function createTempMarkerWithForm(
           </div>
           <div class="popup-slider-labels"><span>sehr laut</span><span>sehr ruhig</span></div>
         </div>
-
       </div>
 
 
@@ -144,21 +158,21 @@ function createTempMarkerWithForm(
         <div class="popup-field">
           <label>Wie attraktiv finden Sie diesen Ort?</label>
           <div class="popup-stars" id="pp-attrStars">
-            <span onclick="ppSetStars('attr',1)">★</span>
-            <span onclick="ppSetStars('attr',2)">★</span>
-            <span onclick="ppSetStars('attr',3)">★</span>
-            <span onclick="ppSetStars('attr',4)">★</span>
-            <span onclick="ppSetStars('attr',5)">★</span>
+            <span onclick="ppSetStars('attr',1)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="ppSetStars('attr',2)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="ppSetStars('attr',3)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="ppSetStars('attr',4)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="ppSetStars('attr',5)"><i class="fa-solid fa-star"></i></span>
           </div>
         </div>
         <div class="popup-field">
           <label>Wie angenehm ist die Umgebung hinsichtlich Grünflächen oder Natur?</label>
           <div class="popup-stars" id="pp-greensStars">
-            <span onclick="ppSetStars('greens',1)">★</span>
-            <span onclick="ppSetStars('greens',2)">★</span>
-            <span onclick="ppSetStars('greens',3)">★</span>
-            <span onclick="ppSetStars('greens',4)">★</span>
-            <span onclick="ppSetStars('greens',5)">★</span>
+            <span onclick="ppSetStars('greens',1)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="ppSetStars('greens',2)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="ppSetStars('greens',3)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="ppSetStars('greens',4)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="ppSetStars('greens',5)"><i class="fa-solid fa-star"></i></span>
           </div>
         </div>
 
@@ -168,11 +182,11 @@ function createTempMarkerWithForm(
         <div class="popup-field">
           <label>Wie sicher fühlen Sie sich an diesem Ort?</label>
           <div class="popup-stars" id="pp-safetyStars">
-            <span onclick="ppSetStars('safety',1)">★</span>
-            <span onclick="ppSetStars('safety',2)">★</span>
-            <span onclick="ppSetStars('safety',3)">★</span>
-            <span onclick="ppSetStars('safety',4)">★</span>
-            <span onclick="ppSetStars('safety',5)">★</span>
+            <span onclick="ppSetStars('safety',1)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="ppSetStars('safety',2)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="ppSetStars('safety',3)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="ppSetStars('safety',4)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="ppSetStars('safety',5)"><i class="fa-solid fa-star"></i></span>
           </div>
         </div>
         <div class="popup-field">
@@ -183,9 +197,7 @@ function createTempMarkerWithForm(
             <span class="popup-slider-val" id="pp-q8Val">5</span>
           </div>
           <div class="popup-slider-labels"><span>sehr unwohl</span><span>sehr wohl</span></div>
-
         </div>
-
       </div>
 
       <!-- Seite 5: Modellkalibrierung -->
@@ -239,10 +251,8 @@ function createTempMarkerWithForm(
             <span>Joggen</span>
           </button>
         </div>
-                </div>
+        </div>
       </div>
-
-
 
       <!-- Seite 4: Bildeindruck -->
       <div class="popup-page" id="pp-7">
@@ -255,14 +265,8 @@ function createTempMarkerWithForm(
           </div>
         </div>
       </div>
-
-
-
          <div class="popup-field">
-
            <div style="display: flex; gap: 8px;">
-
-
              <button
                id="pp-deleteImgWrap"
                onclick="deleteExistingImage(${id})"
@@ -275,7 +279,6 @@ function createTempMarkerWithForm(
                <i class="fa-solid fa-image"></i> Foto aufnehmen
              </label>
            </div>
-
            <input
              type="file"
              id="pp-cameraInput"
@@ -284,7 +287,6 @@ function createTempMarkerWithForm(
              style="display:none"
              onchange="imager()">
          </div>
-
           </div>
         </div>
         </div>
@@ -292,44 +294,22 @@ function createTempMarkerWithForm(
 
       <!-- Seite 4: Bildbewertung -->
       <div class="popup-page" id="pp-8">
-
       <div style="display: flex; gap: 8px;">
-
     <div class="imageholder" id="imageholder2" style="height: 80px; background-color: #c8d8c9;object-fit:scale-down;">
        <canvas id="cvs"></canvas>
-
     </div>
      </div>
       <div class="popup-field">
-
       <div class="popup-slider-wrap">
         <input type="range" min="0" max="100" value="25"step="1" id="tolerance"
           oninput="document.getElementById('pp-q3Val').textContent=this.value">
         <span class="popup-slider-val" id="toleranceValue">25</span>
       </div>
       <div class="popup-slider-labels"><span>gröberer Filter</span><span>feinerer Filter</span></div>
-
-
-
           <div class="res">Berchneter Grünanteil: <span id="perc">0%</span></div>
-
-
-
-
-
-
-
-
         </div>
-
-
-
         </div>
-
-
-
       </div>
-
       <div class="popup-page" id="pp-thank">
         <div class="pp-thankyou">
           <div class="pp-thankyou-icon"> <i class="fa-regular fa-circle-check"></i></div>
@@ -355,25 +335,29 @@ function createTempMarkerWithForm(
       </div>
 
       <div class="popup-nav">
-        <button class="popup-btn-back" id="pp-btnBack" onclick="ppPrev()" style="display:none">← Zurück</button>
+        <button class="popup-btn-back" id="pp-btnBack" onclick="ppPrev()" style="display:none"><i class="fa-solid fa-arrow-left"></i> Zurück</button>
         <button class="popup-btn-next" id="pp-btnNext" onclick="ppNext(${lat}, ${lng},${editing},${id},'${sec}' )" style="${editing ? "display:none" : "display:block"}">Weiter →</button>
         <button class="popup-btn-sec" id="pp-btnSec" onclick="unlock('${sec}')" style="${!editing ? "display:none" : "display:block"}">Entsperren <i class="fa-solid fa-lock-open"></i> </button>
 
       </div>
     </div>
   `;
-
+  // Popup an Marker binden und öffnen
   tempMarker.bindPopup(popupContent, { maxWidth: 360 });
   tempMarker.openPopup();
+
+  // Tempmarker löschen und popup schließen bei Abbruch
   tempMarker.on("popupclose", () => {
     if (tempMarker) {
       map.removeLayer(tempMarker);
       tempMarker = null;
     }
   });
+  // Wenn der Marker editiert wird muss zunächst eine Pasword abfrage
+  // erfolgen. Diese braucht aber ein Element das erst erstellt werden
+  // muss, daher wird kurz gewartet bis Leaflet fertig ist
   setTimeout(() => {
     if (editing) {
-      console.log("Editierend", sec);
       initsec();
       initedit(id);
     } else {
@@ -381,40 +365,22 @@ function createTempMarkerWithForm(
     }
     document.getElementById("pp-name")?.focus();
     const toleranceSlider = document.getElementById("tolerance");
-
     toleranceSlider.addEventListener("input", () => {
       if (originalImageData) analyzeWithTolerance();
     });
-    // createCameraButton();
   }, 200);
 }
 
-const PP_TITLES = [
-  { title: "Ort benennen", sub: "Grundlegende Informationen" },
-  {
-    title: "Umwelt & Klimatologie",
-    sub: "Temperatur, Verschattung, Luftqualität",
-  },
-  { title: "Lärm", sub: "Lautstärke" },
-  { title: "Ästhetik", sub: "Attraktivität und Grünflächen" },
-  { title: "Sicherheit", sub: "Sicherheit" },
-  { title: "Modellkalibrierung", sub: "Kleidung und Bewegung" },
-  { title: "Bildeindruck", sub: "Bildliche Bewertung" },
-  {
-    title: "Grünanteilbestimmung",
-    sub: "Pink markierte Bereiche = Als Natur-Grün erkannt.",
-  },
-];
-
+// Funktion die den Imageupload managed
 function imager() {
   const input = document.getElementById("pp-cameraInput");
   const file = input?.files[0];
   if (!file) return;
-
   const reader = new FileReader();
   const cvs = document.getElementById("cvs");
   const ctx = cvs.getContext("2d", { willReadFrequently: true });
-
+  // Neben dem Bild einladen wird auch der Canvas für die Berechnung
+  // im nächsten Schritt vorbereitet und analysiert
   reader.onload = (event) => {
     const img = new Image();
     img.onload = () => {
@@ -424,47 +390,50 @@ function imager() {
 
       ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
       originalImageData = ctx.getImageData(0, 0, cvs.width, cvs.height);
-
       analyzeWithTolerance();
     };
     img.src = event.target.result;
     const preview = document.getElementById("pp-preview");
     preview.src = event.target.result;
     preview.style.display = "block";
-
-    // const previewer = document.getElementById("pp-previewer");
-    // previewer.src = event.target.result;
-    // previewer.style.display = "block";
   };
 
   reader.readAsDataURL(file);
   document.getElementById("pp-deleteImgWrap").style.display = "flex";
-  //document.getElementById("imageholder2").style.display = "flex";
   const hint1 = document.getElementById("imagehint1");
   hint1.style.display = "none";
 }
 
+// Funktion um eine bestimmte Seite n anzusteuern in der Navigation
 function ppGoTo(n) {
+  // Alte Seite deaktivieren neue aktivieren
   document.getElementById(`pp-${popupState.page}`)?.classList.remove("active");
   popupState.page = n;
   document.getElementById(`pp-${n}`)?.classList.add("active");
 
+  // Progressionsleiste aktualisieren
   document.getElementById("popupProgress").style.width =
     (n / POPUP_TOTAL) * 100 + "%";
   document.getElementById("popupIndicator").textContent =
     `Schritt ${n} von ${POPUP_TOTAL}`;
+  // Titel und Subtitel anpassen
   document.getElementById("popupTitle").textContent = PP_TITLES[n - 1].title;
   document.getElementById("popupSubtitle").textContent = PP_TITLES[n - 1].sub;
+  // Zurückbutton verschwindet auf erster Seite
   document.getElementById("pp-btnBack").style.display =
     n > 1 ? "block" : "none";
-  document.getElementById("pp-btnNext").textContent =
-    n === POPUP_TOTAL ? "Speichern ✓" : "Weiter →";
+  // Weiter button wird bei letzter Seite zu speichern
+  document.getElementById("pp-btnNext").innerHTML =
+    n === POPUP_TOTAL
+      ? 'Speichern <i class="fa-solid fa-upload"></i>'
+      : 'Weiter <i class="fa-solid fa-arrow-right"></i>';
 
   document.querySelectorAll(".popup-dot").forEach((d, i) => {
     d.classList.toggle("active", i === n - 1);
   });
 }
 
+// Verschlüsselung vorbereiten für Enstperren
 function initsec() {
   document.getElementById(`pp-1`)?.classList.remove("active");
   document.getElementById(`pp-0`)?.classList.add("active");
@@ -476,8 +445,12 @@ function initsec() {
   document.getElementById("popupSubtitle").textContent =
     "Bitte Kennword eingeben";
 }
+
+// Bearbeiten des Markers vorbereiten
 async function initedit(id) {
+  // Abfragen des Markes in der DB
   const markus = await getMarkerByID(id);
+  // Auslesen der Markerwerte und setzen im Popup
   document.getElementById("pp-name").value = markus.name;
   document.getElementById("pp-q1").value = markus.q1;
   document.getElementById("pp-q2").value = markus.q2;
@@ -489,7 +462,6 @@ async function initedit(id) {
   document.getElementById("pp-q8").value = markus.q8;
   ppSelectCloth(markus.q9);
   ppSelectMove(markus.q10);
-  console.log(markus);
 
   if (markus.image) {
     // Preview auf Seite 7
@@ -507,7 +479,7 @@ async function initedit(id) {
     const cvs = document.getElementById("cvs");
     const ctx = cvs.getContext("2d", { willReadFrequently: true });
     const img = new Image();
-    img.crossOrigin = "anonymous"; // ← das muss VOR img.src stehen!
+    img.crossOrigin = "anonymous"; // Ohne sind Bilder hier kaputt
 
     img.onload = () => {
       const scale = Math.min(1, 800 / Math.max(img.width, img.height));
@@ -517,14 +489,16 @@ async function initedit(id) {
       originalImageData = ctx.getImageData(0, 0, cvs.width, cvs.height);
       analyzeWithTolerance();
     };
-    img.src = `https://negative-sybille-tubsgeoinfp-ffb32b8c.koyeb.app${markus.image}`;
+    img.src = `http://negative-sybille-tubsgeoinfp-ffb32b8c.koyeb.app/${markus.image}`;
   }
 }
 
+// Funktion zum Entsperren des zu berabeiten Layers
 function unlock(sec = "") {
+  // Eingabe muss dem in der DB gespeicherten Wert entsprechen
   const trial = document.getElementById("pp-seck").value == sec;
   if (trial == true) {
-    console.log("Unlocked");
+    // Wenn erfolgreich wird Seite 1 angezeigt
     document.getElementById(`pp-0`)?.classList.remove("active");
     document.getElementById(`pp-1`)?.classList.add("active");
     document.getElementById("pp-btnSec").style.display = "none";
@@ -534,8 +508,7 @@ function unlock(sec = "") {
     document.getElementById("popupTitle").textContent = PP_TITLES[0].title;
     document.getElementById("popupSubtitle").textContent = PP_TITLES[0].sub;
   } else {
-    console.log("still locked", document.getElementById("pp-seck").value, sec);
-
+    // Wenn falsch wackelt der Button um Fehler zu markieren
     document.getElementById("pp-btnSec").classList.add("is-jiggling");
     setTimeout(() => {
       document.getElementById("pp-btnSec").classList.remove("is-jiggling");
@@ -543,7 +516,10 @@ function unlock(sec = "") {
   }
 }
 
+// Funktion mit der nächste Seite ausgewählt und aufgerufen wird
 function ppNext(lat, lng, editing = false, id = null, sec = "") {
+  // Um bei Seite 7 weiter zu kommen MUSS ein BIld ausgewählt werden
+  // sonst wird Button wackeln
   if (popupState.page === 7) {
     const preview = document.getElementById("pp-preview");
     const hasImage =
@@ -559,18 +535,21 @@ function ppNext(lat, lng, editing = false, id = null, sec = "") {
       return;
     }
   }
-
+  // Wenn letzte Seite wird statt neuer Seite Marker in DB gespeichert
   if (popupState.page === POPUP_TOTAL) {
     ppSave(lat, lng, editing, id, sec);
   } else {
     ppGoTo(popupState.page + 1);
   }
 }
-
+// Vorherige Seite ansteuern
+// keine Absicherung nötig da Button auf Seite 1
+// nicht angezeigt wird
 function ppPrev() {
   if (popupState.page > 1) ppGoTo(popupState.page - 1);
 }
 
+// Funktion zum setzen der Sterne nach Usereingabe
 function ppSetStars(type, val) {
   popupState.stars[type] = val;
   document
@@ -581,17 +560,10 @@ function ppSetStars(type, val) {
     });
 }
 
-function ppSelectChip(el, groupId) {
-  document
-    .getElementById(groupId)
-    .querySelectorAll(".popup-chip")
-    .forEach((c) => c.classList.remove("selected"));
-  el.classList.add("selected");
-}
-
-function ppToggleChip(el) {
-  el.classList.toggle("selected");
-}
+// Funktion zur Auswahl der Kleidung für Kalibrierung
+// kann entweder String oder Value sein
+// Userinpout -> Strring
+// Einladen aus DB -> Value
 function ppSelectCloth(elOrValue) {
   const el =
     typeof elOrValue === "string" || typeof elOrValue === "number"
@@ -604,6 +576,10 @@ function ppSelectCloth(elOrValue) {
   el.classList.add("selected");
 }
 
+// Funktion zur Auswahl des Bewegungszustandes für Kalibrierung
+// kann entweder String oder Value sein
+// Userinpout -> Strring
+// Einladen aus DB -> Value
 function ppSelectMove(elOrValue) {
   const el =
     typeof elOrValue === "string" || typeof elOrValue === "number"
@@ -616,9 +592,12 @@ function ppSelectMove(elOrValue) {
   el.classList.add("selected");
 }
 
-function wellbeing_algo() {}
-
+// Funktion zum Speicher der Userinputs in DB
 async function ppSave(lat, lng, editing = false, id = null, sec = "") {
+  // Name muss eingegeben werden
+  // Aber kann auch erst am Ende eingeben werden
+  // Wenn man das am Anfang forciert verschreckt man den potentiellen
+  // Antwortenden -> Reibung erst am Ende
   const name = document.getElementById("pp-name")?.value.trim();
   if (!name) {
     alert("Bitte einen Namen eingeben");
@@ -626,6 +605,7 @@ async function ppSave(lat, lng, editing = false, id = null, sec = "") {
     return;
   }
   let secval;
+  // Auslesen der Werte aus dem Popover
   const description = document.getElementById("pp-desc")?.value.trim();
   const q1 = parseInt(document.getElementById("pp-q1")?.value || 5);
   const q2 = parseInt(document.getElementById("pp-q2")?.value || 5);
@@ -640,6 +620,7 @@ async function ppSave(lat, lng, editing = false, id = null, sec = "") {
   const q10 =
     document.querySelector(".pp-move-btn.selected")?.dataset.value ?? 5;
 
+  // Berechnen des Scores
   const calculations = calculateUserScore(
     q1,
     q2,
@@ -652,44 +633,22 @@ async function ppSave(lat, lng, editing = false, id = null, sec = "") {
     q9,
     q10,
   );
-  const klim_well = calculations[1]; //TODO Berechnen
-  const laerm_well = calculations[2]; //TODO Berechnen
-  const aesthatic_well = calculations[3]; //TODO Berechnen
-  const secure_well = calculations[4]; //TODO Berechnen
-  const user_score = calculations[0]; //TODO Berechnen
+  const klim_well = calculations[1];
+  const laerm_well = calculations[2];
+  const aesthatic_well = calculations[3];
+  const secure_well = calculations[4];
+  const user_score = calculations[0];
+
   const laerm_score = measurednoise;
-  const image_score = imagescore; //TODO Berechnen
+  const image_score = imagescore;
+
+  //Finalen Score Berechnen
   const final_score = calculateFinalScore(user_score, laerm_score, image_score); //TODO Berechnen
   const image = await getImage(deletediamge);
-  console.log(
-    name,
-    description,
-    lat,
-    lng,
-    klim_well,
-    secval,
-    user_score,
-    laerm_score,
-    image_score,
-    final_score,
-    q1,
-    q2,
-    q3,
-    q4,
-    q5,
-    q6,
-    q7,
-    q8,
-    q9,
-    q10,
-    laerm_well,
-    aesthatic_well,
-    secure_well,
-    image,
-    deletediamge,
-  );
+
+  // Wenn nicht Editiert wird, wird ein neuer Marker in DB erstellt
   if (!editing) {
-    secval = makeid(6);
+    secval = makeid(6); // Neue Passphasre wird generiert
     await createMarkerInDB(
       name,
       description,
@@ -717,10 +676,11 @@ async function ppSave(lat, lng, editing = false, id = null, sec = "") {
       image,
     );
     loadMarkers();
-    show_thanks(secval);
+    show_thanks(secval); // Anzeigen der Dankung
   } else {
-    console.log(sec);
-    secval = sec;
+    // Wenn editiert wird wird marker aktualisiert
+
+    secval = sec; // Passphrase ist wieder die alte
     await updateMarkerInDB(
       id,
       name,
@@ -751,9 +711,9 @@ async function ppSave(lat, lng, editing = false, id = null, sec = "") {
     loadMarkers();
     show_thanks(secval);
   }
-
-  // Danke-Seite anzeigen
 }
+
+// Danke-Seite anzeigen
 function show_thanks(secval) {
   document.getElementById(`pp-${popupState.page}`)?.classList.remove("active");
   document.getElementById("pp-thank")?.classList.add("active");
@@ -763,20 +723,15 @@ function show_thanks(secval) {
   document.getElementById("popupProgress").style.width = "100%";
   document.getElementById("popupIndicator").textContent = "Abgeschlossen";
   document.getElementById("popupTitle").textContent = "Danke!";
-  document.getElementById("popupSubtitle").textContent =
-    "Dein Beitrag wurde gespeichert";
+  document.getElementById("popupSubtitle").innerHTML =
+    `Dein Beitrag wurde gespeichert <i class="fa-solid fa-thumbs-up"></i>`;
   document
     .querySelectorAll(".popup-dot")
     .forEach((d) => d.classList.remove("active"));
 
-  // Passwort/ID anzeigen
+  // Passphrase anzeigen
   document.getElementById("pswd").textContent = secval;
 }
-
-//if (tempMarker) {
-//  map.removeLayer(tempMarker);
-//  tempMarker = null;
-//}
 
 // Funktion für Standortbestimmung im Popup
 function getCurrentLocationForPopup(btnElement) {
@@ -824,6 +779,8 @@ function getCurrentLocationForPopup(btnElement) {
     { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
   );
 }
+
+// Funktion um bestehendes Bild zu löschen
 function deleteExistingImage() {
   deletediamge = true;
   const preview = document.getElementById("pp-preview");
@@ -882,7 +839,7 @@ async function ppMeasureNoise(buttonEl) {
     }
   } finally {
     buttonEl.disabled = false;
-    buttonEl.textContent = "🎙️ Lärm jetzt messen";
+    buttonEl.innerHTML = `Erneut Messen <i class="fa-solid fa-microphone-lines"></i>`;
   }
 }
 function analyzeWithTolerance() {
@@ -950,4 +907,22 @@ function analyzeWithTolerance() {
   const result = (greenCount / totalOpaque) * 100;
   percDisp.textContent = result.toFixed(2) + "%";
   imagescore = (greenCount / totalOpaque) * 10;
+}
+
+// Funktion zur Bildabfrage, wenn Bild gelöscht ist String leer
+function getImage(deletediamge) {
+  const input = document.getElementById("pp-cameraInput");
+  if (deletediamge) {
+    return "";
+  } else if (!input || !input.files || input.files.length === 0) {
+    return null;
+  }
+
+  return new Promise((resolve) => {
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => resolve(e.target.result); // Base64 Data-URL
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
 }
